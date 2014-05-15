@@ -17,8 +17,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 
 public class FileData {
-	TreeMap<LocalDateTime, Integer> chartValues;
-
+	private TreeMap<LocalDateTime, Integer> chartValues;
+	private XYChart.Series<String, Number> dataSeries;
+	private String fileName;
+	private List<File> files;
+	private AgreegationLevel level;
+	
 	public TreeMap<LocalDateTime, Integer> getChartValues() {
 		return chartValues;
 	}
@@ -27,7 +31,7 @@ public class FileData {
 		this.chartValues = chartValues;
 	}
 
-	AgreegationLevel level;
+	
 
 	public AgreegationLevel getLevel() {
 		return level;
@@ -37,9 +41,7 @@ public class FileData {
 		this.level = level;
 	}
 
-	private XYChart.Series<String, Number> dataSeries;
-	private String fileName;
-	private List<File> files;
+
 
 	public List<File> getFiles() {
 		return files;
@@ -105,7 +107,6 @@ public class FileData {
 			time = time.withHour(hourOfDay);
 			time = time.withMinute(minutes);
 			LocalDateTime dateTime = date.atTime(time);
-			System.out.println(dateTime.toString());
 			chartValues.put(dateTime, value);
 
 		}
@@ -167,21 +168,25 @@ public class FileData {
 			}
 
 		}
-		date = date.withDayOfMonth(1);
-		LocalDateTime time = date.atStartOfDay();
+		
+		LocalDateTime time = date.withDayOfMonth(1).atStartOfDay();
 		if(chartValues.containsKey(time))
-				chartValues.put(time, chartValues.get(time)+value);
+		{
+			chartValues.put(time, chartValues.get(time)+value);
+		}
 		else
+		{
 			chartValues.put(time, value);
+		}
 	}
 	
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
-		FileInputStream fin = null;
+		//FileInputStream fin = null;
 		BufferedReader br = null;
 		chartValues.clear();
 		for(File file:files)
 		{
-		try {
+		try (FileInputStream fin = new FileInputStream(file)){
 			fin = new FileInputStream(file);
 			String line;
 			String cvsSplitBy = ",";

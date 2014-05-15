@@ -34,15 +34,43 @@ import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 
 public class Visualization extends Application {
-	XYChart.Series<String, Number> dataSeries = null;
+	XYChart.Series<String, Number> dataSeries;
+	private ListView<String> listFile;
+	private Label errLabel;
+	private Button button;
 
-	FileData d = new FileData();
+	private RadioButton rb1,rb2,rb3,rb4,rb5;
+	private DatePicker fromDate,endDate;
+
+	private Dimension screenSize;
+	
+	private FileData d;
 	private List<File> inputFile;
-	CategoryAxis xAxis;
-	NumberAxis yAxis;
+	private CategoryAxis xAxis;
+	private NumberAxis yAxis;
 
-	LineChart<String, Number> lineChart;
+	private LineChart<String, Number> lineChart;
 
+	
+	
+	public Visualization()
+	{
+		 dataSeries = null;
+		listFile = new ListView<String>();
+		errLabel = new Label();
+		button = new Button("Draw");
+
+		rb1 = new RadioButton("Day");
+		rb2 = new RadioButton("Minute");
+		rb3 = new RadioButton("Hour");
+		rb4 = new RadioButton("Month");
+		rb5 = new RadioButton("Year");
+		fromDate = new DatePicker();
+		endDate = new DatePicker();
+		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		d = new FileData();
+	}
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -50,18 +78,7 @@ public class Visualization extends Application {
 	        FXCollections.observableArrayList();
 
 
-	final ListView<String> listFile = new ListView<String>();
-	final Label errLabel = new Label();
-	final Button button = new Button("Draw");
-
-	RadioButton rb1 = new RadioButton("Day");
-	RadioButton rb2 = new RadioButton("Minute");
-	RadioButton rb3 = new RadioButton("Hour");
-	RadioButton rb4 = new RadioButton("Month");
-	RadioButton rb5 = new RadioButton("Year");
-	DatePicker fromDate = new DatePicker();
-	DatePicker endDate = new DatePicker();
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	
 	
 	@Override
 	public void start(final Stage stage) {
@@ -91,7 +108,7 @@ public class Visualization extends Application {
 			}
 		});
 		listFile.setPrefSize(100, 100);
-
+		
 		final GridPane grid = new GridPane();
 		grid.setVgap(4);
 		grid.setHgap(10);
@@ -202,6 +219,7 @@ public class Visualization extends Application {
 
 					lineChart.setTitle("Line Chart");
 					lineChart.setCreateSymbols(false);
+
 					lineChart.setPrefSize(700, 500);
 					lineChart.getData().add(dataSeries);
 					grid1.add(lineChart, 4, 4);
@@ -220,8 +238,6 @@ public class Visualization extends Application {
 				LocalDate endDateVal = endDate.getValue();
 
 				Period difference = Period.between(fromDateVal, endDateVal);
-				System.out.println(difference.getYears()+" Months "+difference.getMonths()+" Date "+difference.getDays());
-				System.out.println(chk.getText());
 				errLabel.setText("");
 				if (chk.getText().equalsIgnoreCase("Day")) {
 					if (difference.getMonths() > 6) {

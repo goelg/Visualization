@@ -170,10 +170,15 @@ public class Visualization extends Application {
 				if (lineChart != null)
 					grid1.getChildren().remove(lineChart);
 				splitPane1.getItems().remove(grid1);
-			splitPane1.setDividerPositions(0.3f);
+				splitPane1.setDividerPositions(0.3f);
 				RadioButton chk = (RadioButton) rb1.getToggleGroup()
 						.getSelectedToggle(); // Cast object to radio button
 		
+				
+				LocalDate fromDateVal = fromDate.getValue();
+				LocalDate endDateVal = endDate.getValue();
+				
+				
 				if (chk.getText().equalsIgnoreCase("Day"))
 				{
 					d.setLevel(AgreegationLevel.DAY);
@@ -186,6 +191,8 @@ public class Visualization extends Application {
 				}
 				if (chk.getText().equalsIgnoreCase("Month"))
 				{
+					fromDateVal = fromDateVal.withDayOfMonth(1);
+					endDateVal = endDateVal.plusMonths(1).withDayOfMonth(1).minusDays(1);
 					d.setLevel(AgreegationLevel.MONTH);
 					xAxis.setLabel("MONTH");
 				}
@@ -207,7 +214,7 @@ public class Visualization extends Application {
 				if (validateData()) {
 
 					Charts test = new Charts();
-					d.collectData(fromDate.getValue(), endDate.getValue());
+					d.collectData(fromDateVal, endDateVal);
 
 					dataSeries = test.generateSeries(d.getChartValues(),d.getLevel());
 					stage.setTitle("Line Chart");

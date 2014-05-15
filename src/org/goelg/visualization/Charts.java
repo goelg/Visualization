@@ -26,7 +26,9 @@ public class Charts {
 		case DAY:
 			generateDaySeries(chartValues);
 			break;
-
+		case MONTH:
+			generateMonthSeries(chartValues);
+			break;
 		default:
 			break;
 		}
@@ -51,7 +53,7 @@ public class Charts {
 			int value = entry.getValue();
 			dataSeries.getData().add(
 					new XYChart.Data<String, Number>(time.getDayOfMonth()+ " "
-							+ time.getHour(), value));
+							+ time.getHour()+ " HRS", value));
 		}
 
 	}
@@ -61,9 +63,17 @@ public class Charts {
 			LocalDateTime time = entry.getKey();			
 			int value = entry.getValue();
 			dataSeries.getData().add(
-					new XYChart.Data<String, Number>(time.getMonth().toString()+" " + time.getDayOfMonth(), value));
+					new XYChart.Data<String, Number>(time.getMonth().toString()+"/" + time.getDayOfMonth(), value));
 		}
 
 	}
+	public void generateMonthSeries(TreeMap<LocalDateTime, Integer> chartValues) {
+		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
+			LocalDateTime time = entry.getKey();			
+			int value = entry.getValue();
+			dataSeries.getData().add(
+					new XYChart.Data<String, Number>(time.getMonth().toString()+"," + time.getYear(), value));
+		}
 
+	}
 }

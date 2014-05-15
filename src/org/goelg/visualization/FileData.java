@@ -157,6 +157,24 @@ public class FileData {
 		chartValues.put(time, value);
 	}
 
+	public void aggMonthData(LocalDate date, String[] points) {
+		int value = 0;
+		for (int i = 1; i < points.length; i++) {
+			try {
+				value += Integer.parseInt(points[i]);
+			} catch (NumberFormatException e) {
+				value += 0;
+			}
+
+		}
+		date = date.withDayOfMonth(1);
+		LocalDateTime time = date.atStartOfDay();
+		if(chartValues.containsKey(time))
+				chartValues.put(time, chartValues.get(time)+value);
+		else
+			chartValues.put(time, value);
+	}
+	
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
 		FileInputStream fin = null;
 		BufferedReader br = null;
@@ -195,6 +213,9 @@ public class FileData {
 					break;
 				case DAY:
 					aggDayData(date, points);
+					break;
+				case MONTH:
+					aggMonthData(date, points);
 					break;
 				default:
 					break;

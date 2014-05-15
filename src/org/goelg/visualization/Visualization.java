@@ -199,6 +199,9 @@ public class Visualization extends Application {
 
 				if (chk.getText().equalsIgnoreCase("Year"))
 				{
+					fromDateVal = fromDateVal.withDayOfYear(1);
+					endDateVal = endDateVal.plusYears(1).withDayOfYear(1).minusDays(1);
+				
 					d.setLevel(AgreegationLevel.YEAR);
 					xAxis.setLabel("YEAR");
 				}

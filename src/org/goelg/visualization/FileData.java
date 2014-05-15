@@ -179,6 +179,32 @@ public class FileData {
 			chartValues.put(time, value);
 		}
 	}
+
+	
+	public void aggYearData(LocalDate date, String[] points) {
+		int value = 0;
+		for (int i = 1; i < points.length; i++) {
+			try {
+				value += Integer.parseInt(points[i]);
+			} catch (NumberFormatException e) {
+				value += 0;
+			}
+
+		}
+		
+		LocalDateTime time = date.withDayOfYear(1).atStartOfDay();
+		if(chartValues.containsKey(time))
+		{
+			chartValues.put(time, chartValues.get(time)+value);
+		}
+		else
+		{
+			chartValues.put(time, value);
+		}
+	}
+	
+	
+	
 	
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
 		FileInputStream fin = null;
@@ -222,6 +248,10 @@ public class FileData {
 				case MONTH:
 					aggMonthData(date, points);
 					break;
+				case YEAR:
+					aggYearData(date, points);
+					break;
+
 				default:
 					break;
 				}

@@ -29,6 +29,10 @@ public class Charts {
 		case MONTH:
 			generateMonthSeries(chartValues);
 			break;
+		case YEAR:
+			generateYearSeries(chartValues);
+			break;
+
 		default:
 			break;
 		}
@@ -76,4 +80,14 @@ public class Charts {
 		}
 
 	}
+	public void generateYearSeries(TreeMap<LocalDateTime, Integer> chartValues) {
+		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
+			LocalDateTime time = entry.getKey();			
+			int value = entry.getValue();
+			dataSeries.getData().add(
+					new XYChart.Data<String, Number>(time.getYear()+"", value));
+		}
+
+	}
+
 }

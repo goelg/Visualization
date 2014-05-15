@@ -181,12 +181,12 @@ public class FileData {
 	}
 	
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
-		//FileInputStream fin = null;
+		FileInputStream fin = null;
 		BufferedReader br = null;
 		chartValues.clear();
 		for(File file:files)
 		{
-		try (FileInputStream fin = new FileInputStream(file)){
+		try {
 			fin = new FileInputStream(file);
 			String line;
 			String cvsSplitBy = ",";

@@ -13,6 +13,12 @@ public class Charts {
 		dataSeries = new XYChart.Series<String, Number>();
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public XYChart.Series<String, Number> generateSeries(
 			TreeMap<LocalDateTime, Integer> chartValues, AgreegationLevel level) {
 		
@@ -40,6 +46,12 @@ public class Charts {
 
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void generateMinuteSeries(TreeMap<LocalDateTime, Integer> chartValues) {
 		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
 			LocalDateTime time = entry.getKey();
@@ -51,6 +63,12 @@ public class Charts {
 		}
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void generateHourSeries(TreeMap<LocalDateTime, Integer> chartValues) {
 		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
 			LocalDateTime time = entry.getKey();
@@ -62,6 +80,12 @@ public class Charts {
 
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void generateDaySeries(TreeMap<LocalDateTime, Integer> chartValues) {
 		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
 			LocalDateTime time = entry.getKey();			
@@ -71,6 +95,13 @@ public class Charts {
 		}
 
 	}
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void generateMonthSeries(TreeMap<LocalDateTime, Integer> chartValues) {
 		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
 			LocalDateTime time = entry.getKey();			
@@ -80,6 +111,13 @@ public class Charts {
 		}
 
 	}
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void generateYearSeries(TreeMap<LocalDateTime, Integer> chartValues) {
 		for (HashMap.Entry<LocalDateTime, Integer> entry : chartValues.entrySet()) {
 			LocalDateTime time = entry.getKey();			

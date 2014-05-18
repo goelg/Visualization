@@ -23,55 +23,115 @@ public class FileData {
 	private List<File> files;
 	private AgreegationLevel level;
 	
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public TreeMap<LocalDateTime, Integer> getChartValues() {
 		return chartValues;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void setChartValues(TreeMap<LocalDateTime, Integer> chartValues) {
 		this.chartValues = chartValues;
 	}
 
 	
 
+	/**
+	 * @return the level
+	 */
 	public AgreegationLevel getLevel() {
 		return level;
 	}
 
+	/**
+	 * @param level object  the level object  to set
+	 */
 	public void setLevel(AgreegationLevel level) {
 		this.level = level;
 	}
 
 
-
+	/**
+	 * @return the files
+	 */
 	public List<File> getFiles() {
 		return files;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void setFiles(List<File> files) {
 		this.files = files;
 	}
 
+	/**
+	 * @return the File Name 
+	 */
 	public String getFileName() {
 		return fileName;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public FileData() {
 		this.dataSeries = new Series<String, Number>();
 		chartValues = new TreeMap<LocalDateTime, Integer>();
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public XYChart.Series<String, Number> getSeries() {
 		return dataSeries;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void setSeries(XYChart.Series<String, Number> series) {
 		this.dataSeries = series;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public String getString(int i) {
 		String smallStr[] = { "00", "01", "02", "03", "04", "05", "06", "07",
 				"08", "09" };
@@ -81,6 +141,12 @@ public class FileData {
 			return "" + i;
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 
 	public void aggMinuteData(LocalDate date, String[] points) {
 		int hourOfDay = 0;
@@ -112,6 +178,12 @@ public class FileData {
 		}
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void aggHourData(LocalDate date, String[] points) {
 		int hourOfDay = 0;
 		int minutes = 0;
@@ -144,6 +216,12 @@ public class FileData {
 
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void aggDayData(LocalDate date, String[] points) {
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
@@ -158,6 +236,12 @@ public class FileData {
 		chartValues.put(time, value);
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void aggMonthData(LocalDate date, String[] points) {
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
@@ -180,7 +264,13 @@ public class FileData {
 		}
 	}
 
-	
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void aggYearData(LocalDate date, String[] points) {
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
@@ -205,7 +295,13 @@ public class FileData {
 	
 	
 	
-	
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
 		FileInputStream fin = null;
 		BufferedReader br = null;

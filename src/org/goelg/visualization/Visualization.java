@@ -33,6 +33,14 @@ import javafx.stage.FileChooser;
 import javafx.scene.control.Button;
 import javafx.scene.control.SplitPane;
 
+/**
+* The Visualization program implements an application that
+* simply displays charts to the standard output.
+*
+* @author  Garima Goel
+* @version 1.0
+* @since   2014-03-31 
+*/
 public class Visualization extends Application {
 	XYChart.Series<String, Number> dataSeries;
 	private ListView<String> listFile;
@@ -51,7 +59,12 @@ public class Visualization extends Application {
 
 	private LineChart<String, Number> lineChart;
 
-	
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	
 	public Visualization()
 	{
@@ -71,6 +84,13 @@ public class Visualization extends Application {
 		
 		d = new FileData();
 	}
+	 /**
+	   * This is the main method .
+	   * @param args Unused.
+	   * @return Nothing.
+	   * @exception IOException On input error.
+	   * @see IOException
+	   */
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -78,7 +98,13 @@ public class Visualization extends Application {
 	        FXCollections.observableArrayList();
 
 
-	
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	
 	@Override
 	public void start(final Stage stage) {
@@ -164,6 +190,12 @@ public class Visualization extends Application {
 
 		button.setOnAction(new EventHandler<ActionEvent>() {
 
+			/*@param
+			 *@return
+			 *@throws
+			 *
+			 * 
+			 */
 			public void handle(ActionEvent event) {
 				xAxis = new CategoryAxis();
 				yAxis = new NumberAxis();
@@ -228,7 +260,7 @@ public class Visualization extends Application {
 					lineChart = new LineChart<String, Number>(xAxis, yAxis);
 
 					lineChart.setTitle("Line Chart");
-					lineChart.setCreateSymbols(false);
+					//lineChart.setCreateSymbols(false);
 
 					lineChart.setPrefSize(700, 500);
 					lineChart.getData().add(dataSeries);
@@ -236,10 +268,23 @@ public class Visualization extends Application {
 
 					splitPane1.getItems().addAll(grid1);
 					stage.show();
-		
+					 for (XYChart.Series<String, Number> s : lineChart.getData()) {
+				            for (XYChart.Data<String, Number> d : s.getData()) {
+				                Tooltip.install(d.getNode(), new Tooltip(
+				                        String.format("%s = %d", 
+				                                d.getXValue(), 
+				                                d.getYValue())));
+				            }
+				        }
 				}
 			}
 
+			/*@param
+			 *@return
+			 *@throws
+			 *
+			 * 
+			 */
 			private boolean validateData() {
 
 				RadioButton chk = (RadioButton) rb1.getToggleGroup()
@@ -300,6 +345,12 @@ public class Visualization extends Application {
 		});
 	}
 
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	private static void configureFileChooser(final FileChooser fileChooser) {
 		fileChooser.setTitle("File");
 

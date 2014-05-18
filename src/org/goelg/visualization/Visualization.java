@@ -169,7 +169,7 @@ public class Visualization extends Application {
 				new ChangeListener<Toggle>() {
 
 					public void changed(ObservableValue<? extends Toggle> obVal,
-							Toggle t, Toggle t1) {
+							Toggle tog, Toggle tog1) {
 
 					}
 				});

@@ -20,7 +20,7 @@ public class Charts {
 	 * 
 	 */
 	public XYChart.Series<String, Number> generateSeries(
-			TreeMap<LocalDateTime, Integer> chartValues, AgreegationLevel level) {
+			TreeMap<LocalDateTime, Integer> chartValues, AggregationLevel level) {
 		
 		switch (level) {
 		case MINUTES:

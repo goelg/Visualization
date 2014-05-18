@@ -10,10 +10,6 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
@@ -30,8 +26,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
 
 /**
 * The Visualization program implements an application that
@@ -39,7 +33,7 @@ import javafx.scene.control.SplitPane;
 *
 * @author  Garima Goel
 * @version 1.0
-* @since   2014-03-31 
+* @since   2014-05-18 
 */
 public class Visualization extends Application {
 	XYChart.Series<String, Number> dataSeries;
@@ -52,7 +46,7 @@ public class Visualization extends Application {
 
 	private Dimension screenSize;
 	
-	private FileData d;
+	private FileData data;
 	private List<File> inputFile;
 	private CategoryAxis xAxis;
 	private NumberAxis yAxis;
@@ -68,7 +62,7 @@ public class Visualization extends Application {
 	
 	public Visualization()
 	{
-		 dataSeries = null;
+		 dataSeries = new XYChart.Series<String, Number>();
 		listFile = new ListView<String>();
 		errLabel = new Label();
 		button = new Button("Draw");
@@ -82,7 +76,7 @@ public class Visualization extends Application {
 		endDate = new DatePicker();
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		d = new FileData();
+		data = new FileData();
 	}
 	 /**
 	   * This is the main method .
@@ -117,7 +111,7 @@ public class Visualization extends Application {
 		final Button chooseFile = new Button("Browse file");
 		final ToggleGroup group = new ToggleGroup();
 		chooseFile.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(final ActionEvent e) {
+			public void handle(final ActionEvent event) {
 				 configureFileChooser(fileChooser);
 				
 				inputFile = fileChooser.showOpenMultipleDialog(stage);
@@ -153,7 +147,7 @@ public class Visualization extends Application {
 		rb3.setToggleGroup(group);
 		rb4.setToggleGroup(group);
 		rb5.setToggleGroup(group);
-
+		
 		grid.add(rb1, 1, 3);
 		grid.add(rb2, 1, 4);
 		grid.add(rb3, 1, 5);
@@ -174,17 +168,9 @@ public class Visualization extends Application {
 		group.selectedToggleProperty().addListener(
 				new ChangeListener<Toggle>() {
 
-					public void changed(ObservableValue<? extends Toggle> ov,
+					public void changed(ObservableValue<? extends Toggle> obVal,
 							Toggle t, Toggle t1) {
 
-					}
-				});
-		group.selectedToggleProperty().addListener(
-				new ChangeListener<Toggle>() {
-					public void changed(ObservableValue<? extends Toggle> ov,
-							Toggle t, Toggle t1) {
-
-		
 					}
 				});
 
@@ -213,45 +199,44 @@ public class Visualization extends Application {
 				
 				if (chk.getText().equalsIgnoreCase("Day"))
 				{
-					d.setLevel(AgreegationLevel.DAY);
+					data.setLevel(AggregationLevel.DAY);
 					xAxis.setLabel("DAY");
 				}
 				if (chk.getText().equalsIgnoreCase("Minute"))
 				{
-					d.setLevel(AgreegationLevel.MINUTES);
+					data.setLevel(AggregationLevel.MINUTES);
 					xAxis.setLabel("MINUTES");
 				}
 				if (chk.getText().equalsIgnoreCase("Month"))
 				{
 					fromDateVal = fromDateVal.withDayOfMonth(1);
 					endDateVal = endDateVal.plusMonths(1).withDayOfMonth(1).minusDays(1);
-					d.setLevel(AgreegationLevel.MONTH);
+					data.setLevel(AggregationLevel.MONTH);
 					xAxis.setLabel("MONTH");
 				}
 
 				if (chk.getText().equalsIgnoreCase("Year"))
 				{
 					fromDateVal = fromDateVal.withDayOfYear(1);
-					endDateVal = endDateVal.plusYears(1).withDayOfYear(1).minusDays(1);
-				
-					d.setLevel(AgreegationLevel.YEAR);
+					endDateVal = endDateVal.plusYears(1).withDayOfYear(1).minusDays(1);		
+					data.setLevel(AggregationLevel.YEAR);
 					xAxis.setLabel("YEAR");
 				}
 
 				if (chk.getText().equalsIgnoreCase("Hour"))
 				{
-					d.setLevel(AgreegationLevel.HOUR);
+					data.setLevel(AggregationLevel.HOUR);
 					xAxis.setLabel("HOUR");
 				}
 
-				d.setFiles(inputFile);
+				data.setFiles(inputFile);
 
 				if (validateData()) {
 
 					Charts test = new Charts();
-					d.collectData(fromDateVal, endDateVal);
+					data.collectData(fromDateVal, endDateVal);
 
-					dataSeries = test.generateSeries(d.getChartValues(),d.getLevel());
+					dataSeries = test.generateSeries(data.getChartValues(),data.getLevel());
 					stage.setTitle("Line Chart");
 					// defining the axes
 					

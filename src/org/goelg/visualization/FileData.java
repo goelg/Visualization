@@ -21,7 +21,7 @@ public class FileData {
 	private XYChart.Series<String, Number> dataSeries;
 	private String fileName;
 	private List<File> files;
-	private AgreegationLevel level;
+	private AggregationLevel level;
 	
 
 	/*@param
@@ -49,14 +49,14 @@ public class FileData {
 	/**
 	 * @return the level
 	 */
-	public AgreegationLevel getLevel() {
+	public AggregationLevel getLevel() {
 		return level;
 	}
 
 	/**
 	 * @param level object  the level object  to set
 	 */
-	public void setLevel(AgreegationLevel level) {
+	public void setLevel(AggregationLevel level) {
 		this.level = level;
 	}
 
@@ -132,13 +132,17 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public String getString(int i) {
+	public String getString(int number) {
 		String smallStr[] = { "00", "01", "02", "03", "04", "05", "06", "07",
 				"08", "09" };
-		if (i < 10)
-			return smallStr[i];
+		if (number < 10)
+		{
+			return smallStr[number];
+		}
 		else
-			return "" + i;
+		{
+			return String.valueOf(number);
+		}
 	}
 
 	/*@param
@@ -159,22 +163,21 @@ public class FileData {
 			int value;
 			if (i < points.length) {
 				try
-
 				{
-
 					value = Integer.parseInt(points[i]);
 				} catch (NumberFormatException e) {
 					value = 0;
 				}
-			} else
+			} 
+			else
+			{
 				value = 0;
+			}
 
 			LocalTime time = LocalTime.MIDNIGHT;
 			time = time.withHour(hourOfDay);
 			time = time.withMinute(minutes);
-			LocalDateTime dateTime = date.atTime(time);
-			chartValues.put(dateTime, value);
-
+			chartValues.put(date.atTime(time), value);
 		}
 	}
 
@@ -190,28 +193,24 @@ public class FileData {
 		int value = 0;
 
 		for (int i = 1; i < 24 * 60; i++, minutes++) {
-
 			if (minutes == 60) {
-
 				hourOfDay++;
 				LocalTime time = LocalTime.MIDNIGHT;
 				time = time.withHour(hourOfDay);
-				//time.withMinute(minutes);
-				LocalDateTime dateTime = date.atTime(time);
-				chartValues.put(dateTime, value);
+				chartValues.put(date.atTime(time), value);
 				minutes = 0;
 				value = 0;
-
 			}
 			if (i < points.length) {
 				try {
-
 					value += Integer.parseInt(points[i]);
 				} catch (NumberFormatException e) {
 					value += 0;
 				}
 			} else
+			{
 				value += 0;
+			}
 		}
 
 	}
@@ -232,8 +231,7 @@ public class FileData {
 			}
 
 		}
-		LocalDateTime time = date.atStartOfDay();
-		chartValues.put(time, value);
+		chartValues.put(date.atStartOfDay(), value);
 	}
 
 	/*@param
@@ -250,9 +248,7 @@ public class FileData {
 			} catch (NumberFormatException e) {
 				value += 0;
 			}
-
 		}
-		
 		LocalDateTime time = date.withDayOfMonth(1).atStartOfDay();
 		if(chartValues.containsKey(time))
 		{
@@ -303,19 +299,19 @@ public class FileData {
 	 * 
 	 */
 	public void collectData(LocalDate fromDate, LocalDate endDate) {
-		FileInputStream fin = null;
-		BufferedReader br = null;
+		FileInputStream finStream = null;
+		BufferedReader buffReader = null;
 		chartValues.clear();
 		for(File file:files)
 		{
 		try {
-			fin = new FileInputStream(file);
+			finStream = new FileInputStream(file);
 			String line;
 			String cvsSplitBy = ",";
 
-			br = new BufferedReader(new InputStreamReader(fin));
+			buffReader = new BufferedReader(new InputStreamReader(finStream));
 
-			while ((line = br.readLine()) != null) {
+			while ((line = buffReader.readLine()) != null) {
 
 				String[] points = line.split(cvsSplitBy);
 				LocalDate date;
@@ -325,11 +321,15 @@ public class FileData {
 				Period difference = Period.between(fromDate, date);
 				
 				if(difference.isNegative())
+				{
 					continue;
+				}
 
 				difference = Period.between(date, endDate);
 				if(difference.isNegative())
+				{
 					continue;
+				}
 				
 				switch (level) {
 				case MINUTES:
@@ -360,8 +360,8 @@ public class FileData {
 			e.printStackTrace();
 		} finally {
 			try {
-				fin.close();
-				br.close();
+				finStream.close();
+				buffReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 

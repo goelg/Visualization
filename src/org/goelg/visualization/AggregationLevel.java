@@ -23,6 +23,10 @@ public enum AggregationLevel {
 	/**
 	 *  Hour Level Aggregation
 	 */
-	HOUR
+	HOUR,
+	/**
+	 *  Week Level Aggregation
+	 */
+	WEEK
 	
 }

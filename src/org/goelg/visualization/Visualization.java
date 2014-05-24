@@ -41,7 +41,7 @@ public class Visualization extends Application {
 	private Label errLabel;
 	private Button button;
 
-	private RadioButton rb1,rb2,rb3,rb4,rb5;
+	private RadioButton rbDay,rbMin,rbHour,rbMonth,rbYear,rbWeek;
 	private DatePicker fromDate,endDate;
 
 	private Dimension screenSize;
@@ -67,11 +67,12 @@ public class Visualization extends Application {
 		errLabel = new Label();
 		button = new Button("Draw");
 
-		rb1 = new RadioButton("Day");
-		rb2 = new RadioButton("Minute");
-		rb3 = new RadioButton("Hour");
-		rb4 = new RadioButton("Month");
-		rb5 = new RadioButton("Year");
+		rbDay = new RadioButton("Day");
+		rbMin = new RadioButton("Minute");
+		rbHour = new RadioButton("Hour");
+		rbMonth = new RadioButton("Month");
+		rbWeek = new RadioButton("Week");
+		rbYear = new RadioButton("Year");
 		fromDate = new DatePicker();
 		endDate = new DatePicker();
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -141,24 +142,25 @@ public class Visualization extends Application {
 		grid.add(listFile, 0, 1);
 		grid.add(chooseFile, 1, 0);
 		grid.add(new Label("Aggregation Level "), 0, 2);
-		rb1.setToggleGroup(group);
-		rb1.setSelected(true);
-		rb2.setToggleGroup(group);
-		rb3.setToggleGroup(group);
-		rb4.setToggleGroup(group);
-		rb5.setToggleGroup(group);
-		
-		grid.add(rb1, 1, 3);
-		grid.add(rb2, 1, 4);
-		grid.add(rb3, 1, 5);
-		grid.add(rb4, 1, 6);
-		grid.add(rb5, 1, 7);
-		grid.add(new Label("From Date "), 0, 8);
+		rbDay.setToggleGroup(group);
+		rbDay.setSelected(true);
+		rbMin.setToggleGroup(group);
+		rbHour.setToggleGroup(group);
+		rbMonth.setToggleGroup(group);
+		rbYear.setToggleGroup(group);
+		rbWeek.setToggleGroup(group);
+		grid.add(rbDay, 1, 5);
+		grid.add(rbMin, 1, 3);
+		grid.add(rbHour, 1, 4);
+		grid.add(rbMonth, 1, 7);
+		grid.add(rbWeek, 1, 6);
+		grid.add(rbYear, 1, 8);
+		grid.add(new Label("From Date "), 0, 9);
 		grid.add(fromDate, 1, 9);
-		grid.add(new Label("End Date"), 0, 9);
+		grid.add(new Label("End Date"), 0, 10);
 		grid.add(endDate, 1, 10);
 		grid.add(button, 0, 11);
-		grid.add(errLabel, 0, 13);
+		grid.add(errLabel, 0, 12);
 		splitPane1.getItems().addAll(grid);
 		final Group root = (Group) scene.getRoot();
 		root.getChildren().add(splitPane1);
@@ -189,7 +191,7 @@ public class Visualization extends Application {
 					grid1.getChildren().remove(lineChart);
 				splitPane1.getItems().remove(grid1);
 				splitPane1.setDividerPositions(0.3f);
-				RadioButton chk = (RadioButton) rb1.getToggleGroup()
+				RadioButton chk = (RadioButton) rbDay.getToggleGroup()
 						.getSelectedToggle(); // Cast object to radio button
 		
 				
@@ -209,12 +211,24 @@ public class Visualization extends Application {
 				}
 				if (chk.getText().equalsIgnoreCase("Month"))
 				{
+					
 					fromDateVal = fromDateVal.withDayOfMonth(1);
 					endDateVal = endDateVal.plusMonths(1).withDayOfMonth(1).minusDays(1);
 					data.setLevel(AggregationLevel.MONTH);
 					xAxis.setLabel("MONTH");
 				}
 
+				if (chk.getText().equalsIgnoreCase("Week"))
+				{
+					int dayWeek = fromDateVal.getDayOfWeek().getValue();
+					fromDateVal = fromDateVal.minusDays(dayWeek-1);
+					dayWeek = endDateVal.getDayOfWeek().getValue();
+					endDateVal = endDateVal.plusDays(7-dayWeek);
+					data.setLevel(AggregationLevel.WEEK);
+					xAxis.setLabel("WEEK");
+				}
+				
+				
 				if (chk.getText().equalsIgnoreCase("Year"))
 				{
 					fromDateVal = fromDateVal.withDayOfYear(1);
@@ -272,7 +286,7 @@ public class Visualization extends Application {
 			 */
 			private boolean validateData() {
 
-				RadioButton chk = (RadioButton) rb1.getToggleGroup()
+				RadioButton chk = (RadioButton) rbDay.getToggleGroup()
 						.getSelectedToggle(); // Cast object to radio button
 				LocalDate fromDateVal = fromDate.getValue();
 				LocalDate endDateVal = endDate.getValue();
@@ -280,14 +294,14 @@ public class Visualization extends Application {
 				Period difference = Period.between(fromDateVal, endDateVal);
 				errLabel.setText("");
 				if (chk.getText().equalsIgnoreCase("Day")) {
-					if (difference.getMonths() > 6) {
-						errLabel.setText("Please select Days less than 6 months");
-						return false;
-					}
-					if (difference.getYears() > 0) {
-						errLabel.setText("Please select other Aggregation period");
-						return false;
-					}
+			//		if (difference.getMonths() > 6) {
+				//		errLabel.setText("Please select Days less than 6 months");
+					//	return false;
+				//	}
+				//	if (difference.getYears() > 0) {
+					//	errLabel.setText("Please select other Aggregation period");
+					//	return false;
+				//	}
 				}
 				if (chk.getText().equalsIgnoreCase("Minute")) {
 					if (difference.getMonths() > 0) {

@@ -13,12 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.TreeMap;
 
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Series;
-
 public class FileData {
 	private TreeMap<LocalDateTime, Integer> chartValues;
-	private XYChart.Series<String, Number> dataSeries;
 	private String fileName;
 	private List<File> files;
 	private AggregationLevel level;
@@ -102,36 +98,9 @@ public class FileData {
 	 * 
 	 */
 	public FileData() {
-		this.dataSeries = new Series<String, Number>();
 		chartValues = new TreeMap<LocalDateTime, Integer>();
 	}
 
-	/*@param
-	 *@return
-	 *@throws
-	 *
-	 * 
-	 */
-	public XYChart.Series<String, Number> getSeries() {
-		return dataSeries;
-	}
-
-	/*@param
-	 *@return
-	 *@throws
-	 *
-	 * 
-	 */
-	public void setSeries(XYChart.Series<String, Number> series) {
-		this.dataSeries = series;
-	}
-
-	/*@param
-	 *@return
-	 *@throws
-	 *
-	 * 
-	 */
 	public String getString(int number) {
 		String smallStr[] = { "00", "01", "02", "03", "04", "05", "06", "07",
 				"08", "09" };
@@ -240,6 +209,38 @@ public class FileData {
 	 *
 	 * 
 	 */
+	public void aggWeekData(LocalDate date, String[] points) {
+		int value = 0;
+		for (int i = 1; i < points.length; i++) {
+			try {
+				value += Integer.parseInt(points[i]);
+			} catch (NumberFormatException e) {
+				value += 0;
+			}
+
+		}
+		int dayWeek = date.getDayOfWeek().getValue();
+
+		LocalDateTime time = date.plusDays(8-dayWeek).atStartOfDay();
+		if(chartValues.containsKey(time))
+		{
+			chartValues.put(time, chartValues.get(time)+value);
+		}
+		else
+		{
+			chartValues.put(time, value);
+		}
+	}
+	
+	
+	
+	
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
 	public void aggMonthData(LocalDate date, String[] points) {
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
@@ -340,6 +341,9 @@ public class FileData {
 					break;
 				case DAY:
 					aggDayData(date, points);
+					break;
+				case WEEK:
+					aggWeekData(date, points);
 					break;
 				case MONTH:
 					aggMonthData(date, points);

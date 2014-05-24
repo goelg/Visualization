@@ -32,6 +32,9 @@ public class Charts {
 		case DAY:
 			generateDaySeries(chartValues);
 			break;
+		case WEEK:
+			generateDaySeries(chartValues);
+			break;
 		case MONTH:
 			generateMonthSeries(chartValues);
 			break;

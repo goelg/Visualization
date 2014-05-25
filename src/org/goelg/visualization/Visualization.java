@@ -10,6 +10,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
 
 import java.awt.Dimension;
@@ -17,6 +18,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.event.ActionEvent;
@@ -36,7 +38,7 @@ import javafx.stage.FileChooser;
 * @since   2014-05-18 
 */
 public class Visualization extends Application {
-	XYChart.Series<String, Number> dataSeries;
+	List<Series<String, Number>> dataSeries;
 	private ListView<String> listFile;
 	private Label errLabel;
 	private Button button;
@@ -62,7 +64,7 @@ public class Visualization extends Application {
 	
 	public Visualization()
 	{
-		 dataSeries = new XYChart.Series<String, Number>();
+		 dataSeries = new ArrayList<XYChart.Series<String, Number>>();
 		listFile = new ListView<String>();
 		errLabel = new Label();
 		button = new Button("Draw");
@@ -262,7 +264,9 @@ public class Visualization extends Application {
 					//lineChart.setCreateSymbols(false);
 
 					lineChart.setPrefSize(700, 500);
-					lineChart.getData().add(dataSeries);
+
+					for(Series<String, Number> data:dataSeries)
+						lineChart.getData().add(data);
 					grid1.add(lineChart, 4, 4);
 
 					splitPane1.getItems().addAll(grid1);

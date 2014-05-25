@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
 public class FileData {
-	private TreeMap<LocalDateTime, Integer> chartValues;
+	private List<TreeMap<LocalDateTime, Integer>> chartValues;
 	private String fileName;
 	private List<File> files;
 	private AggregationLevel level;
@@ -26,7 +27,7 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public TreeMap<LocalDateTime, Integer> getChartValues() {
+	public List<TreeMap<LocalDateTime, Integer>> getChartValues() {
 		return chartValues;
 	}
 
@@ -36,8 +37,27 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void setChartValues(TreeMap<LocalDateTime, Integer> chartValues) {
+	public void setChartValues(List<TreeMap<LocalDateTime, Integer>> chartValues) {
 		this.chartValues = chartValues;
+	}
+
+
+	/*@param
+	 *@return
+	 *@throws
+	 *
+	 * 
+	 */
+	public void addChartValues(int index, TreeMap<LocalDateTime, Integer>chartValue) {
+		
+		if(index<chartValues.size())
+		{
+			TreeMap<LocalDateTime, Integer> tempValue;
+			tempValue = chartValues.get(index);
+			chartValue.putAll(tempValue);	
+		}
+		chartValues.add(index,chartValue);
+		
 	}
 
 	
@@ -98,7 +118,7 @@ public class FileData {
 	 * 
 	 */
 	public FileData() {
-		chartValues = new TreeMap<LocalDateTime, Integer>();
+		chartValues = new ArrayList<TreeMap<LocalDateTime, Integer>>();//TreeMap<LocalDateTime, Integer>();
 	}
 
 	public String getString(int number) {
@@ -121,9 +141,11 @@ public class FileData {
 	 * 
 	 */
 
-	public void aggMinuteData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer> aggMinuteData(LocalDate date, String[] points) {
 		int hourOfDay = 0;
 		int minutes = 0;
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
+		
 		for (int i = 1; i < 60 * 24; i++, minutes++) {
 			if (minutes == 60) {
 				hourOfDay++;
@@ -145,9 +167,11 @@ public class FileData {
 
 			LocalTime time = LocalTime.MIDNIGHT;
 			time = time.withHour(hourOfDay);
-			time = time.withMinute(minutes);
-			chartValues.put(date.atTime(time), value);
+			time = time.withMinute(minutes);			
+				chartValue.put(date.atTime(time), value);
+			
 		}
+		return chartValue;
 	}
 
 	/*@param
@@ -156,17 +180,17 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void aggHourData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer>  aggHourData(LocalDate date, String[] points) {
 		int hourOfDay = 0;
 		int minutes = 0;
 		int value = 0;
-
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		for (int i = 1; i < 24 * 60; i++, minutes++) {
 			if (minutes == 60) {
 				hourOfDay++;
 				LocalTime time = LocalTime.MIDNIGHT;
 				time = time.withHour(hourOfDay);
-				chartValues.put(date.atTime(time), value);
+				chartValue.put(date.atTime(time), value);
 				minutes = 0;
 				value = 0;
 			}
@@ -181,7 +205,7 @@ public class FileData {
 				value += 0;
 			}
 		}
-
+		return chartValue;
 	}
 
 	/*@param
@@ -190,7 +214,8 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void aggDayData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer> aggDayData(LocalDate date, String[] points) {
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
 			try {
@@ -200,7 +225,8 @@ public class FileData {
 			}
 
 		}
-		chartValues.put(date.atStartOfDay(), value);
+		chartValue.put(date.atStartOfDay(), value);
+		return chartValue;
 	}
 
 	/*@param
@@ -209,7 +235,8 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void aggWeekData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer> aggWeekData(LocalDate date, String[] points) {
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
 			try {
@@ -222,14 +249,15 @@ public class FileData {
 		int dayWeek = date.getDayOfWeek().getValue();
 
 		LocalDateTime time = date.plusDays(8-dayWeek).atStartOfDay();
-		if(chartValues.containsKey(time))
+		if(chartValue.containsKey(time))
 		{
-			chartValues.put(time, chartValues.get(time)+value);
+			chartValue.put(time, chartValue.get(time)+value);
 		}
 		else
 		{
-			chartValues.put(time, value);
+			chartValue.put(time, value);
 		}
+		return chartValue;
 	}
 	
 	
@@ -241,7 +269,8 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void aggMonthData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer> aggMonthData(LocalDate date, String[] points) {
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
 			try {
@@ -251,14 +280,15 @@ public class FileData {
 			}
 		}
 		LocalDateTime time = date.withDayOfMonth(1).atStartOfDay();
-		if(chartValues.containsKey(time))
+		if(chartValue.containsKey(time))
 		{
-			chartValues.put(time, chartValues.get(time)+value);
+			chartValue.put(time, chartValue.get(time)+value);
 		}
 		else
 		{
-			chartValues.put(time, value);
+			chartValue.put(time, value);
 		}
+		return chartValue;
 	}
 
 
@@ -268,7 +298,8 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void aggYearData(LocalDate date, String[] points) {
+	public TreeMap<LocalDateTime, Integer> aggYearData(LocalDate date, String[] points) {
+		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
 			try {
@@ -280,14 +311,15 @@ public class FileData {
 		}
 		
 		LocalDateTime time = date.withDayOfYear(1).atStartOfDay();
-		if(chartValues.containsKey(time))
+		if(chartValue.containsKey(time))
 		{
-			chartValues.put(time, chartValues.get(time)+value);
+			chartValue.put(time, chartValue.get(time)+value);
 		}
 		else
 		{
-			chartValues.put(time, value);
+			chartValue.put(time, value);
 		}
+		return chartValue;
 	}
 	
 	
@@ -303,6 +335,7 @@ public class FileData {
 		FileInputStream finStream = null;
 		BufferedReader buffReader = null;
 		chartValues.clear();
+		int i = 0;
 		for(File file:files)
 		{
 		try {
@@ -334,22 +367,22 @@ public class FileData {
 				
 				switch (level) {
 				case MINUTES:
-					aggMinuteData(date, points);
+					addChartValues(i, aggMinuteData(date, points));
 					break;
 				case HOUR:
-					aggHourData(date, points);
+					addChartValues(i,aggHourData(date, points));
 					break;
 				case DAY:
-					aggDayData(date, points);
+					addChartValues(i,aggDayData(date, points));
 					break;
 				case WEEK:
-					aggWeekData(date, points);
+					addChartValues(i,aggWeekData(date, points));
 					break;
 				case MONTH:
-					aggMonthData(date, points);
+					addChartValues(i,aggMonthData(date, points));
 					break;
 				case YEAR:
-					aggYearData(date, points);
+					addChartValues(i,aggYearData(date, points));
 					break;
 
 				default:
@@ -370,6 +403,7 @@ public class FileData {
 				e.printStackTrace();
 			} 
 		}
+		i++;
 		}
 	}
 

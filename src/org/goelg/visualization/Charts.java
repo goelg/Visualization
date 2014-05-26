@@ -23,7 +23,6 @@ public class Charts {
 	 */
 	public List<XYChart.Series<String, Number>> generateSeries(
 			List<TreeMap<LocalDateTime, Integer>> chartValues, AggregationLevel level) {
-		
 		switch (level) {
 		case MINUTES:
 			generateMinuteSeries(chartValues);
@@ -154,7 +153,6 @@ public class Charts {
 			for (HashMap.Entry<LocalDateTime, Integer> entry : chartValue.entrySet()) {
 			LocalDateTime time = entry.getKey();
 			int value = entry.getValue();
-			
 			data.getData().add(
 					new XYChart.Data<String, Number>(time.getYear()+"", value));
 		}

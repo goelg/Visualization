@@ -15,9 +15,15 @@ import javafx.stage.Stage;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +48,7 @@ public class Visualization extends Application {
 	private ListView<String> listFile;
 	private Label errLabel;
 	private Button button;
-
+	private CheckBox multiChart;
 	private RadioButton rbDay,rbMin,rbHour,rbMonth,rbYear,rbWeek;
 	private DatePicker fromDate,endDate;
 
@@ -52,7 +58,7 @@ public class Visualization extends Application {
 	private List<File> inputFile;
 	private CategoryAxis xAxis;
 	private NumberAxis yAxis;
-
+	private LocalDate minDate,maxDate;
 	private LineChart<String, Number> lineChart;
 
 	/*@param
@@ -78,8 +84,12 @@ public class Visualization extends Application {
 		fromDate = new DatePicker();
 		endDate = new DatePicker();
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
+		multiChart = new CheckBox("Multi Line Enabled");
 		data = new FileData();
+		minDate = null;
+		maxDate = null;
+		
+		
 	}
 	 /**
 	   * This is the main method .
@@ -122,16 +132,17 @@ public class Visualization extends Application {
 					for (int i = 0; i < inputFile.size(); i++) {
 			            fileNames.add(inputFile.get(i).getName());
 			        }
-				
+				setDate();
+				fromDate.setValue(minDate);
+				endDate.setValue(maxDate);
 				if (inputFile != null) {
-					
 					listFile.setItems(fileNames);
-
 				}
+				
 			}
 		});
 		listFile.setPrefSize(100, 100);
-		
+		int yPos = 0;
 		final GridPane grid = new GridPane();
 		grid.setVgap(4);
 		grid.setHgap(10);
@@ -140,10 +151,12 @@ public class Visualization extends Application {
 		grid1.setVgap(12);
 		grid1.setHgap(20);
 		grid1.setPadding(new Insets(7, 6, 4, 8));
-		grid.add(new Label("Files Select "), 0, 0);
-		grid.add(listFile, 0, 1);
-		grid.add(chooseFile, 1, 0);
-		grid.add(new Label("Aggregation Level "), 0, 2);
+		grid.add(new Label("Files Select "), 0, yPos);
+		grid.add(chooseFile, 1, yPos++);
+		grid.add(multiChart, 1, yPos);
+		grid.add(listFile, 0, yPos++);
+		
+		grid.add(new Label("Aggregation Level "), 0, yPos++);
 		rbDay.setToggleGroup(group);
 		rbDay.setSelected(true);
 		rbMin.setToggleGroup(group);
@@ -151,18 +164,18 @@ public class Visualization extends Application {
 		rbMonth.setToggleGroup(group);
 		rbYear.setToggleGroup(group);
 		rbWeek.setToggleGroup(group);
-		grid.add(rbDay, 1, 5);
-		grid.add(rbMin, 1, 3);
-		grid.add(rbHour, 1, 4);
-		grid.add(rbMonth, 1, 7);
-		grid.add(rbWeek, 1, 6);
-		grid.add(rbYear, 1, 8);
-		grid.add(new Label("From Date "), 0, 9);
-		grid.add(fromDate, 1, 9);
-		grid.add(new Label("End Date"), 0, 10);
-		grid.add(endDate, 1, 10);
-		grid.add(button, 0, 11);
-		grid.add(errLabel, 0, 12);
+		grid.add(rbMin, 1, yPos++);
+		grid.add(rbHour, 1, yPos++);
+		grid.add(rbDay, 1, yPos++);
+		grid.add(rbWeek, 1, yPos++);
+		grid.add(rbMonth, 1, yPos++);
+		grid.add(rbYear, 1, yPos++);
+		grid.add(new Label("From Date "), 0, yPos);
+		grid.add(fromDate, 1, yPos++);
+		grid.add(new Label("End Date"), 0, yPos);
+		grid.add(endDate, 1, yPos++);
+		grid.add(button, 0, yPos++);
+		grid.add(errLabel, 0, yPos++);
 		splitPane1.getItems().addAll(grid);
 		final Group root = (Group) scene.getRoot();
 		root.getChildren().add(splitPane1);
@@ -250,7 +263,8 @@ public class Visualization extends Application {
 				if (validateData()) {
 
 					Charts test = new Charts();
-					data.collectData(fromDateVal, endDateVal);
+					
+					data.collectData(fromDateVal, endDateVal,multiChart.isSelected());
 
 					dataSeries = test.generateSeries(data.getChartValues(),data.getLevel());
 					stage.setTitle("Line Chart");
@@ -298,14 +312,14 @@ public class Visualization extends Application {
 				Period difference = Period.between(fromDateVal, endDateVal);
 				errLabel.setText("");
 				if (chk.getText().equalsIgnoreCase("Day")) {
-			//		if (difference.getMonths() > 6) {
-				//		errLabel.setText("Please select Days less than 6 months");
-					//	return false;
-				//	}
-				//	if (difference.getYears() > 0) {
-					//	errLabel.setText("Please select other Aggregation period");
-					//	return false;
-				//	}
+					if (difference.getMonths() > 6) {
+						errLabel.setText("Please select Days less than 6 months");
+						return false;
+					}
+					if (difference.getYears() > 0) {
+						errLabel.setText("Please select other Aggregation period");
+						return false;
+					}
 				}
 				if (chk.getText().equalsIgnoreCase("Minute")) {
 					if (difference.getMonths() > 0) {
@@ -361,4 +375,68 @@ public class Visualization extends Application {
 				.getProperty("user.home")));
 	}
 
+	
+	public void setDate() {
+		FileInputStream finStream = null;
+		BufferedReader buffReader = null;
+
+	//	int i = 0;
+		for(File file:inputFile)
+		{
+		try {
+			finStream = new FileInputStream(file);
+			String line;
+			String cvsSplitBy = ",";
+			String prevLine = new String();
+			buffReader = new BufferedReader(new InputStreamReader(finStream));
+			String[] points ;
+			if((line = buffReader.readLine()) != null) {
+				prevLine = line;
+				points = line.split(cvsSplitBy);
+				LocalDate date;
+				final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");		
+				date = LocalDate.parse(points[0],dtf);
+				if(minDate==null)
+					minDate = date;
+				if(Period.between(minDate, date).isNegative())
+					minDate = date;
+				
+			}
+			
+			while ((line = buffReader.readLine()) != null) {
+				prevLine = line;	
+			}
+			
+			if(prevLine.length()>0)
+			{
+				points = prevLine.split(cvsSplitBy);
+				LocalDate date;
+				final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");		
+				date = LocalDate.parse(points[0],dtf);
+				if(maxDate==null)
+					maxDate = date;
+				if(Period.between(date,maxDate).isNegative())
+					maxDate = date;
+				
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				finStream.close();
+				buffReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+		}
+//		i++;
+		}
+	}
+
+	
+	
 }

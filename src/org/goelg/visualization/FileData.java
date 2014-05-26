@@ -53,11 +53,10 @@ public class FileData {
 		if(index<chartValues.size())
 		{
 			TreeMap<LocalDateTime, Integer> tempValue;
-			tempValue = chartValues.get(index);
+			tempValue = chartValues.remove(index);
 			chartValue.putAll(tempValue);	
 		}
 		chartValues.add(index,chartValue);
-		
 	}
 
 	
@@ -331,7 +330,7 @@ public class FileData {
 	 *
 	 * 
 	 */
-	public void collectData(LocalDate fromDate, LocalDate endDate) {
+	public void collectData(LocalDate fromDate, LocalDate endDate, boolean multiLine) {
 		FileInputStream finStream = null;
 		BufferedReader buffReader = null;
 		chartValues.clear();
@@ -339,6 +338,7 @@ public class FileData {
 		for(File file:files)
 		{
 		try {
+			
 			finStream = new FileInputStream(file);
 			String line;
 			String cvsSplitBy = ",";
@@ -346,7 +346,7 @@ public class FileData {
 			buffReader = new BufferedReader(new InputStreamReader(finStream));
 
 			while ((line = buffReader.readLine()) != null) {
-
+			//System.out.println("i="+i);
 				String[] points = line.split(cvsSplitBy);
 				LocalDate date;
 				
@@ -403,7 +403,8 @@ public class FileData {
 				e.printStackTrace();
 			} 
 		}
-		i++;
+		if(multiLine)
+			i++;
 		}
 	}
 

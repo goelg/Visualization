@@ -12,7 +12,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -263,9 +262,7 @@ public class Visualization extends Application {
 				if (validateData()) {
 
 					Charts test = new Charts();
-					
 					data.collectData(fromDateVal, endDateVal,multiChart.isSelected());
-
 					dataSeries = test.generateSeries(data.getChartValues(),data.getLevel());
 					stage.setTitle("Line Chart");
 					// defining the axes
@@ -379,8 +376,6 @@ public class Visualization extends Application {
 	public void setDate() {
 		FileInputStream finStream = null;
 		BufferedReader buffReader = null;
-
-	//	int i = 0;
 		for(File file:inputFile)
 		{
 		try {
@@ -433,7 +428,6 @@ public class Visualization extends Application {
 				e.printStackTrace();
 			} 
 		}
-//		i++;
 		}
 	}
 

@@ -59,7 +59,18 @@ public class FileData {
 		chartValues.add(index,chartValue);
 	}
 
-	
+	public int findValFromString(String str)
+	{
+		int value;
+		try
+		{
+			value = Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			value = 0;
+			return value;
+		}
+		return value;
+	}
 
 	/**
 	 * @return the level
@@ -152,12 +163,8 @@ public class FileData {
 			}
 			int value;
 			if (i < points.length) {
-				try
-				{
-					value = Integer.parseInt(points[i]);
-				} catch (NumberFormatException e) {
-					value = 0;
-				}
+				value = findValFromString(points[i]);
+				System.out.println(value);
 			} 
 			else
 			{
@@ -194,11 +201,7 @@ public class FileData {
 				value = 0;
 			}
 			if (i < points.length) {
-				try {
-					value += Integer.parseInt(points[i]);
-				} catch (NumberFormatException e) {
-					value += 0;
-				}
+				value += findValFromString(points[i]);
 			} else
 			{
 				value += 0;
@@ -217,12 +220,7 @@ public class FileData {
 		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
-			try {
-				value += Integer.parseInt(points[i]);
-			} catch (NumberFormatException e) {
-				value += 0;
-			}
-
+			value += findValFromString(points[i]);
 		}
 		chartValue.put(date.atStartOfDay(), value);
 		return chartValue;
@@ -238,15 +236,9 @@ public class FileData {
 		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
-			try {
-				value += Integer.parseInt(points[i]);
-			} catch (NumberFormatException e) {
-				value += 0;
-			}
-
+			value += findValFromString(points[i]);
 		}
 		int dayWeek = date.getDayOfWeek().getValue();
-
 		LocalDateTime time = date.plusDays(8-dayWeek).atStartOfDay();
 		if(chartValue.containsKey(time))
 		{
@@ -272,11 +264,7 @@ public class FileData {
 		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
-			try {
-				value += Integer.parseInt(points[i]);
-			} catch (NumberFormatException e) {
-				value += 0;
-			}
+			value += findValFromString(points[i]);
 		}
 		LocalDateTime time = date.withDayOfMonth(1).atStartOfDay();
 		if(chartValue.containsKey(time))
@@ -301,12 +289,7 @@ public class FileData {
 		TreeMap<LocalDateTime, Integer> chartValue = new TreeMap<LocalDateTime, Integer>();
 		int value = 0;
 		for (int i = 1; i < points.length; i++) {
-			try {
-				value += Integer.parseInt(points[i]);
-			} catch (NumberFormatException e) {
-				value += 0;
-			}
-
+			value += findValFromString(points[i]);
 		}
 		
 		LocalDateTime time = date.withDayOfYear(1).atStartOfDay();
@@ -346,7 +329,6 @@ public class FileData {
 			buffReader = new BufferedReader(new InputStreamReader(finStream));
 
 			while ((line = buffReader.readLine()) != null) {
-			//System.out.println("i="+i);
 				String[] points = line.split(cvsSplitBy);
 				LocalDate date;
 				

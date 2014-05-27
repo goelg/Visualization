@@ -116,9 +116,11 @@ public class Visualization extends Application {
 	public void start(final Stage stage) {
 		final SplitPane splitPane1 = new SplitPane();
 		splitPane1.setOrientation(Orientation.HORIZONTAL);
-		splitPane1.setPrefSize(screenSize.getWidth(),screenSize.getHeight());
+		splitPane1.setPrefSize(screenSize.getWidth(),screenSize.getHeight()-50);
 		stage.setTitle("Visualization");
-		Scene scene = new Scene(new Group(), screenSize.getWidth(),screenSize.getHeight());
+		Scene scene = new Scene(new Group());
+		stage.setMaximized(true);
+		
 		final FileChooser fileChooser = new FileChooser();
 		final Button chooseFile = new Button("Browse file");
 		final ToggleGroup group = new ToggleGroup();
@@ -144,6 +146,7 @@ public class Visualization extends Application {
 		int yPos = 0;
 		final GridPane grid = new GridPane();
 		grid.setVgap(4);
+		grid.setManaged(true);
 		grid.setHgap(10);
 		grid.setPadding(new Insets(5, 5, 5, 5));
 		final GridPane grid1 = new GridPane();
@@ -204,6 +207,7 @@ public class Visualization extends Application {
 				if (lineChart != null)
 					grid1.getChildren().remove(lineChart);
 				splitPane1.getItems().remove(grid1);
+				grid1.setManaged(true);
 				splitPane1.setDividerPositions(0.3f);
 				RadioButton chk = (RadioButton) rbDay.getToggleGroup()
 						.getSelectedToggle(); // Cast object to radio button
@@ -274,11 +278,11 @@ public class Visualization extends Application {
 					lineChart.setTitle("Line Chart");
 					//lineChart.setCreateSymbols(false);
 
-					lineChart.setPrefSize(700, 500);
-
+					lineChart.setPrefSize(splitPane1.getWidth(),splitPane1.getHeight()-100);
+					
 					for(Series<String, Number> data:dataSeries)
 						lineChart.getData().add(data);
-					grid1.add(lineChart, 4, 4);
+					grid1.add(lineChart, 0, 0);
 
 					splitPane1.getItems().addAll(grid1);
 					stage.show();

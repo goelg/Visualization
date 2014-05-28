@@ -6,12 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.stage.Stage;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -49,8 +51,11 @@ public class Visualization extends Application {
 	private Button button;
 	private CheckBox multiChart;
 	private RadioButton rbDay,rbMin,rbHour,rbMonth,rbYear,rbWeek;
+	private RadioButton rbLine,rbBar;
 	private DatePicker fromDate,endDate;
+	private ToggleGroup aggLevelGroup, chartTypeGroup;
 
+	
 	private Dimension screenSize;
 	
 	private FileData data;
@@ -58,8 +63,9 @@ public class Visualization extends Application {
 	private CategoryAxis xAxis;
 	private NumberAxis yAxis;
 	private LocalDate minDate,maxDate;
-	private LineChart<String, Number> lineChart;
-
+//	private LineChart<String, Number> lineChart;
+	//private BarChart<String, Number> lineChart;
+	private XYChart<String, Number> lineChart;
 	/*@param
 	 *@return
 	 *@throws
@@ -80,6 +86,9 @@ public class Visualization extends Application {
 		rbMonth = new RadioButton("Month");
 		rbWeek = new RadioButton("Week");
 		rbYear = new RadioButton("Year");
+		rbLine = new RadioButton("Line");
+		rbBar = new RadioButton("Bar");
+		
 		fromDate = new DatePicker();
 		endDate = new DatePicker();
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -87,6 +96,20 @@ public class Visualization extends Application {
 		data = new FileData();
 		minDate = null;
 		maxDate = null;
+
+		aggLevelGroup = new ToggleGroup();
+		chartTypeGroup = new ToggleGroup();
+
+		rbLine.setToggleGroup(chartTypeGroup);
+		rbBar.setToggleGroup(chartTypeGroup);
+		rbLine.setSelected(true);
+		rbMin.setToggleGroup(aggLevelGroup);
+		rbHour.setToggleGroup(aggLevelGroup);
+		rbMonth.setToggleGroup(aggLevelGroup);
+		rbYear.setToggleGroup(aggLevelGroup);
+		rbWeek.setToggleGroup(aggLevelGroup);
+		rbDay.setToggleGroup(aggLevelGroup);
+		rbDay.setSelected(true);
 		
 		
 	}
@@ -123,7 +146,6 @@ public class Visualization extends Application {
 		
 		final FileChooser fileChooser = new FileChooser();
 		final Button chooseFile = new Button("Browse file");
-		final ToggleGroup group = new ToggleGroup();
 		chooseFile.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(final ActionEvent event) {
 				 configureFileChooser(fileChooser);
@@ -158,14 +180,12 @@ public class Visualization extends Application {
 		grid.add(multiChart, 1, yPos);
 		grid.add(listFile, 0, yPos++);
 		
+		grid.add(new Label("Chart Type "), 0, yPos++);
+		grid.add(rbLine, 1, yPos++);
+		grid.add(rbBar, 1, yPos++);
+		
 		grid.add(new Label("Aggregation Level "), 0, yPos++);
-		rbDay.setToggleGroup(group);
-		rbDay.setSelected(true);
-		rbMin.setToggleGroup(group);
-		rbHour.setToggleGroup(group);
-		rbMonth.setToggleGroup(group);
-		rbYear.setToggleGroup(group);
-		rbWeek.setToggleGroup(group);
+		
 		grid.add(rbMin, 1, yPos++);
 		grid.add(rbHour, 1, yPos++);
 		grid.add(rbDay, 1, yPos++);
@@ -184,7 +204,7 @@ public class Visualization extends Application {
 
 		stage.setScene(scene);
 		stage.show();
-		group.selectedToggleProperty().addListener(
+		aggLevelGroup.selectedToggleProperty().addListener(
 				new ChangeListener<Toggle>() {
 
 					public void changed(ObservableValue<? extends Toggle> obVal,
@@ -209,25 +229,22 @@ public class Visualization extends Application {
 				splitPane1.getItems().remove(grid1);
 				grid1.setManaged(true);
 				splitPane1.setDividerPositions(0.3f);
-				RadioButton chk = (RadioButton) rbDay.getToggleGroup()
-						.getSelectedToggle(); // Cast object to radio button
-		
-				
+				String aggLevelVal =((RadioButton)aggLevelGroup.getSelectedToggle()).getText(); 
+				String chartTypeVal =((RadioButton)chartTypeGroup.getSelectedToggle()).getText(); 
 				LocalDate fromDateVal = fromDate.getValue();
-				LocalDate endDateVal = endDate.getValue();
+				LocalDate endDateVal = endDate.getValue();				
 				
-				
-				if (chk.getText().equalsIgnoreCase("Day"))
+				if (aggLevelVal.equalsIgnoreCase("Day"))
 				{
 					data.setLevel(AggregationLevel.DAY);
 					xAxis.setLabel("DAY");
 				}
-				if (chk.getText().equalsIgnoreCase("Minute"))
+				if (aggLevelVal.equalsIgnoreCase("Minute"))
 				{
 					data.setLevel(AggregationLevel.MINUTES);
 					xAxis.setLabel("MINUTES");
 				}
-				if (chk.getText().equalsIgnoreCase("Month"))
+				if (aggLevelVal.equalsIgnoreCase("Month"))
 				{
 					
 					fromDateVal = fromDateVal.withDayOfMonth(1);
@@ -236,7 +253,7 @@ public class Visualization extends Application {
 					xAxis.setLabel("MONTH");
 				}
 
-				if (chk.getText().equalsIgnoreCase("Week"))
+				if (aggLevelVal.equalsIgnoreCase("Week"))
 				{
 					int dayWeek = fromDateVal.getDayOfWeek().getValue();
 					fromDateVal = fromDateVal.minusDays(dayWeek-1);
@@ -247,7 +264,7 @@ public class Visualization extends Application {
 				}
 				
 				
-				if (chk.getText().equalsIgnoreCase("Year"))
+				if (aggLevelVal.equalsIgnoreCase("Year"))
 				{
 					fromDateVal = fromDateVal.withDayOfYear(1);
 					endDateVal = endDateVal.plusYears(1).withDayOfYear(1).minusDays(1);		
@@ -255,7 +272,7 @@ public class Visualization extends Application {
 					xAxis.setLabel("YEAR");
 				}
 
-				if (chk.getText().equalsIgnoreCase("Hour"))
+				if (aggLevelVal.equalsIgnoreCase("Hour"))
 				{
 					data.setLevel(AggregationLevel.HOUR);
 					xAxis.setLabel("HOUR");
@@ -273,9 +290,19 @@ public class Visualization extends Application {
 					
 					
 					// creating the chart
-					lineChart = new LineChart<String, Number>(xAxis, yAxis);
-
-					lineChart.setTitle("Line Chart");
+					if(chartTypeVal.equalsIgnoreCase("Bar"))
+					{
+						lineChart = new BarChart<String, Number>(xAxis, yAxis);
+						lineChart.setTitle("Bar Chart");
+					}
+						
+					else
+					{
+						lineChart = new LineChart<String, Number>(xAxis, yAxis);
+						lineChart.setTitle("Line Chart");
+					}
+					
+					
 					//lineChart.setCreateSymbols(false);
 
 					lineChart.setPrefSize(splitPane1.getWidth(),splitPane1.getHeight()-100);
